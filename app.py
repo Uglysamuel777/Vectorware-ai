@@ -140,4 +140,4 @@ if prompt := st.chat_input("🌀 Ask VectorWare AI anything..."):
     st.session_state.messages.append({"role": "assistant", "content": reply})
     st.chat_message("assistant").write(reply)
 
-    client= Groq(api_key="client = Groq(api_key=st.secrets["GROQ_API_KEY"])")
+    client= Groq(api_key="client = Groq(api_key=st.secrets["GROQ_API_KEY"])
