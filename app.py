@@ -19,8 +19,10 @@ st.markdown("""
     .stChatInput input {
         background-color: #2a0050 !important;
         color: white !important;
-        border: 2px solid #7b2fff !important;
+        border: 2px solid #bf00ff !important;
         border-radius: 25px !important;
+        box-shadow: 0 0 15px rgba(191, 0, 255, 0.7),
+                    0 0 30px rgba(123, 47, 255, 0.4) !important;
     }
     
     .stChatMessage {
