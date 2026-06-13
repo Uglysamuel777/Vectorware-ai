@@ -5,21 +5,23 @@ from datetime import datetime
 st.set_page_config(
     page_title="VectorWare AI",
     page_icon="🌀",
-    layout="wide"
+    layout="centered"
 )
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+    
+    * { font-family: 'Inter', sans-serif !important; }
     
     .stApp {
-        background: linear-gradient(135deg, #0d0015, #1a0030, #0d0015);
+        background: #080810;
         color: white !important;
     }
     
     section[data-testid="stSidebar"] {
-        background: rgba(20, 0, 40, 0.98) !important;
-        border-right: 1px solid #7b2fff !important;
+        background: #0d0d1a !important;
+        border-right: 1px solid rgba(123, 47, 255, 0.15) !important;
     }
     
     section[data-testid="stSidebar"] * {
@@ -27,164 +29,195 @@ st.markdown("""
     }
     
     .stChatInput input {
-        background-color: #1a0030 !important;
+        background-color: #12121f !important;
         color: white !important;
-        border: 1px solid #7b2fff !important;
-        border-radius: 25px !important;
-        box-shadow: 0 0 8px rgba(123, 47, 255, 0.4) !important;
+        border: 1px solid rgba(123, 47, 255, 0.25) !important;
+        border-radius: 30px !important;
+        font-size: 1em !important;
+    }
+    
+    .stChatInput input:focus {
+        border: 1px solid rgba(123, 47, 255, 0.6) !important;
+        box-shadow: 0 0 15px rgba(123, 47, 255, 0.15) !important;
     }
     
     .stChatMessage {
-        background: rgba(123, 47, 255, 0.08) !important;
-        border: 1px solid rgba(123, 47, 255, 0.3) !important;
-        border-radius: 12px !important;
-        padding: 10px !important;
-        box-shadow: 0 0 10px rgba(123, 47, 255, 0.15) !important;
-        margin-bottom: 8px !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 5px 0 !important;
     }
     
     [data-testid="stChatMessageContent"] * {
         color: white !important;
+        line-height: 1.7 !important;
     }
     
     [data-testid="stChatMessageContent"] strong {
-        color: #cc99ff !important;
+        color: #bb88ff !important;
     }
     
-    .stMarkdown p {
+    .stMarkdown p { color: white !important; }
+    
+    @keyframes spiralGlow {
+        0% { filter: drop-shadow(0 0 5px #7b2fff) drop-shadow(0 0 10px #7b2fff); }
+        25% { filter: drop-shadow(0 0 15px #bf00ff) drop-shadow(0 0 30px #bf00ff); }
+        50% { filter: drop-shadow(0 0 25px #00d4ff) drop-shadow(0 0 50px #7b2fff); }
+        75% { filter: drop-shadow(0 0 15px #bf00ff) drop-shadow(0 0 30px #bf00ff); }
+        100% { filter: drop-shadow(0 0 5px #7b2fff) drop-shadow(0 0 10px #7b2fff); }
+    }
+    
+    @keyframes spiralSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .spiral-idle {
+        animation: spiralGlow 3s ease-in-out infinite;
+        display: inline-block;
+    }
+    
+    .spiral-thinking {
+        animation: spiralSpin 1s linear infinite, spiralGlow 1s ease-in-out infinite;
+        display: inline-block;
+    }
+    
+    .greeting {
+        font-size: 2.2em;
+        font-weight: 300;
         color: white !important;
-    }
-
-    .header-container {
-        text-align: center;
-        padding: 20px 0 5px 0;
+        margin: 0;
+        line-height: 1.2;
     }
     
-    .logo-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 2em;
-        background: linear-gradient(90deg, #bf00ff, #7b2fff, #00d4ff);
+    .greeting-sub {
+        font-size: 2.2em;
+        font-weight: 600;
+        background: linear-gradient(90deg, #9b59ff, #bf00ff, #00d4ff);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin: 0;
     }
     
-    .tagline {
-        color: #bb88ff !important;
-        font-size: 0.85em;
-        letter-spacing: 2px;
-        margin-top: 3px;
-    }
-    
-    .glow-divider {
-        border: none;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, #7b2fff, #bf00ff, transparent);
-        margin: 15px 0;
-        box-shadow: 0 0 8px #7b2fff;
-    }
-    
-    .spiral-container {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 10px;
-        animation: pulse 3s infinite;
-    }
-    
-    @keyframes pulse {
-        0% { filter: drop-shadow(0 0 8px #7b2fff); }
-        50% { filter: drop-shadow(0 0 20px #bf00ff); }
-        100% { filter: drop-shadow(0 0 8px #7b2fff); }
-    }
-    
-    .status-bar {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        padding: 8px;
-        background: rgba(123, 47, 255, 0.1);
-        border-radius: 10px;
-        margin-bottom: 15px;
-        font-size: 0.75em;
-        color: #bb88ff !important;
-    }
-    
-    .mic-btn {
-        background: linear-gradient(135deg, #7b2fff, #bf00ff);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 45px;
-        height: 45px;
-        font-size: 20px;
-        cursor: pointer;
-        box-shadow: 0 0 12px rgba(191, 0, 255, 0.6);
-        transition: all 0.3s ease;
-    }
-    
-    .mic-btn:hover {
-        box-shadow: 0 0 25px rgba(191, 0, 255, 0.9);
-        transform: scale(1.1);
-    }
-    
-    .mic-label {
-        color: #bb88ff;
-        font-size: 0.7em;
-        margin-top: 3px;
-        text-align: center;
-    }
-
-    .about-card {
-        background: rgba(123, 47, 255, 0.1);
-        border: 1px solid rgba(123, 47, 255, 0.4);
-        border-radius: 12px;
-        padding: 15px;
-        margin-top: 10px;
-    }
-    
-    .about-title {
-        font-family: 'Orbitron', sans-serif;
+    .suggestion-btn {
+        background: #12121f;
+        border: 1px solid rgba(123, 47, 255, 0.2);
+        border-radius: 15px;
+        padding: 14px 18px;
+        color: white !important;
         font-size: 0.9em;
-        background: linear-gradient(90deg, #bf00ff, #00d4ff);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+        transition: all 0.2s ease;
         margin-bottom: 8px;
     }
     
-    .about-text {
-        color: #bb88ff !important;
-        font-size: 0.78em;
-        line-height: 1.6;
+    .suggestion-btn:hover {
+        background: rgba(123, 47, 255, 0.15);
+        border-color: rgba(123, 47, 255, 0.5);
+        box-shadow: 0 0 10px rgba(123, 47, 255, 0.2);
     }
     
-    .founder-badge {
-        background: rgba(123, 47, 255, 0.2);
-        border: 1px solid #7b2fff;
-        border-radius: 8px;
-        padding: 5px 10px;
+    .bottom-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+    }
+    
+    .mic-icon-btn {
+        background: transparent;
+        border: 1px solid rgba(123, 47, 255, 0.3);
+        border-radius: 50%;
+        width: 42px;
+        height: 42px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+    
+    .mic-icon-btn:hover {
+        background: rgba(123, 47, 255, 0.15);
+        border-color: rgba(123, 47, 255, 0.6);
+    }
+    
+    .mic-svg {
+        width: 18px;
+        height: 18px;
+        fill: rgba(180, 140, 255, 0.8);
+    }
+    
+    .top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 0;
+        margin-bottom: 10px;
+    }
+    
+    .logo-small {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9em;
+        color: #9b8ec4 !important;
+        font-weight: 500;
+    }
+    
+    .sidebar-item {
+        background: rgba(123, 47, 255, 0.08);
+        border: 1px solid rgba(123, 47, 255, 0.15);
+        border-radius: 10px;
+        padding: 10px 12px;
         margin: 4px 0;
-        font-size: 0.75em;
-        color: white !important;
+        font-size: 0.82em;
+        color: #ccc !important;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .sidebar-item:hover {
+        background: rgba(123, 47, 255, 0.2);
+    }
+    
+    .about-section {
+        background: rgba(123, 47, 255, 0.06);
+        border: 1px solid rgba(123, 47, 255, 0.15);
+        border-radius: 12px;
+        padding: 14px;
+        margin-top: 8px;
+    }
+    
+    .founder-tag {
+        background: rgba(123, 47, 255, 0.12);
+        border-radius: 8px;
+        padding: 6px 10px;
+        margin: 4px 0;
+        font-size: 0.78em;
+        color: #bb88ff !important;
+        display: block;
     }
 
-    .dash-card {
-        background: rgba(123, 47, 255, 0.1);
-        border: 1px solid rgba(123, 47, 255, 0.3);
-        border-radius: 12px;
-        padding: 12px 15px;
-        text-align: center;
+    .stButton button {
+        background: rgba(123, 47, 255, 0.1) !important;
+        color: white !important;
+        border: 1px solid rgba(123, 47, 255, 0.2) !important;
+        border-radius: 10px !important;
+        transition: all 0.2s !important;
     }
     
-    .dash-card h3 {
-        font-size: 1.5em;
-        color: #bf00ff !important;
-        margin: 0;
-    }
-    
-    .dash-card p {
-        font-size: 0.75em;
-        color: #bb88ff !important;
-        margin: 3px 0 0 0;
+    .stButton button:hover {
+        background: rgba(123, 47, 255, 0.25) !important;
+        border-color: rgba(123, 47, 255, 0.5) !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -192,218 +225,225 @@ st.markdown("""
 # Sidebar
 with st.sidebar:
     st.markdown("""
-        <div style='text-align:center; padding: 10px 0 5px 0;'>
-            <p style='font-family: Orbitron; font-size: 1.1em; 
-            background: linear-gradient(90deg, #bf00ff, #00d4ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin:0;'>
-            🌀 VectorWare AI</p>
-            <p style='color:#bb88ff; font-size:0.7em; margin:2px 0 10px 0;'>
-            Building the Future</p>
+        <div style='text-align:center; padding: 15px 0 10px 0;'>
+            <div class='spiral-idle' style='display:inline-block;'>
+                <svg width="35" height="35" viewBox="0 0 200 200">
+                    <defs>
+                        <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#bf00ff"/>
+                            <stop offset="100%" style="stop-color:#7b2fff"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M100,100 C100,60 140,40 160,70 C180,100 160,140 130,150 
+                             C90,165 50,140 40,100 C25,50 60,15 100,15 
+                             C150,15 185,55 185,100 C185,155 140,190 90,185"
+                          fill="none" stroke="url(#sg)" stroke-width="18" 
+                          stroke-linecap="round"/>
+                </svg>
+            </div>
+            <p style='font-size:0.95em; color:#9b8ec4; margin:5px 0 0 0; 
+            font-weight:500;'>VectorWare AI</p>
         </div>
     """, unsafe_allow_html=True)
     
-    if st.button("➕ New Chat", use_container_width=True):
+    if st.button("✦ New Chat", use_container_width=True):
         st.session_state.messages = []
         st.rerun()
     
-    st.markdown("---")
-    st.markdown("**💬 Chat History**")
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#555; font-size:0.75em; margin:0;'>RECENT</p>", 
+                unsafe_allow_html=True)
     
     if "chat_histories" not in st.session_state:
         st.session_state.chat_histories = []
     
     if len(st.session_state.chat_histories) == 0:
-        st.markdown("<small style='color:#666'>No chats yet</small>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#444; font-size:0.8em;'>No conversations yet</p>", 
+                    unsafe_allow_html=True)
     
-    for i, chat in enumerate(st.session_state.chat_histories):
-        if st.button(f"🕐 {chat['title']}", key=f"hist_{i}", use_container_width=True):
+    for i, chat in enumerate(st.session_state.chat_histories[:8]):
+        if st.button(f"↩ {chat['title']}", key=f"h_{i}", use_container_width=True):
             st.session_state.messages = chat["messages"]
             st.rerun()
     
-    st.markdown("---")
-    
-    # System Info
-    st.markdown("**⚙️ System**")
-    st.markdown("<small style='color:#bb88ff'>Model: llama-3.1-8b</small>", unsafe_allow_html=True)
-    st.markdown("<small style='color:#00ff88'>● Status: Online</small>", unsafe_allow_html=True)
-    st.markdown("<small style='color:#bb88ff'>Version: 1.0.0</small>", unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    # About Section
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("""
-        <div class="about-card">
-            <p class="about-title">🏢 About VectorWare</p>
-            <p class="about-text">
-                VectorWare is a next-generation AI and technology company delivering 
-                cutting-edge web design, game development, and AI automation solutions 
-                to clients worldwide.
+        <div class='about-section'>
+            <p style='color:#9b59ff; font-size:0.8em; font-weight:600; margin:0 0 8px 0;'>
+            🏢 VectorWare</p>
+            <p style='color:#888; font-size:0.75em; line-height:1.5; margin:0 0 10px 0;'>
+            Next-generation AI & technology company delivering cutting-edge solutions worldwide.
             </p>
-            <br/>
-            <p style='color:#7b2fff; font-size:0.75em; margin-bottom:5px;'>👥 Founders</p>
-            <div class="founder-badge">🚀 Samuel Frimpong</div>
-            <div class="founder-badge">💡 Cardinal Kofi Nsiah</div>
-            <br/>
-            <p style='color:#666; font-size:0.7em; text-align:center;'>
-            © 2025 VectorWare. All rights reserved.</p>
+            <p style='color:#555; font-size:0.72em; margin:0 0 5px 0;'>FOUNDERS</p>
+            <span class='founder-tag'>🚀 Samuel Frimpong</span>
+            <span class='founder-tag'>💡 Cardinal Kofi Nsiah</span>
+            <p style='color:#333; font-size:0.68em; text-align:center; margin:10px 0 0 0;'>
+            © 2025 VectorWare Inc.</p>
         </div>
     """, unsafe_allow_html=True)
-
-# Dashboard stats
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.markdown("""
-        <div class="dash-card">
-            <h3>🌀</h3>
-            <p>VectorWare AI</p>
-        </div>
-    """, unsafe_allow_html=True)
-with col2:
-    st.markdown("""
-        <div class="dash-card">
-            <h3>⚡</h3>
-            <p>Fast Mode Active</p>
-        </div>
-    """, unsafe_allow_html=True)
-with col3:
-    st.markdown("""
-        <div class="dash-card">
-            <h3>🔒</h3>
-            <p>Encrypted & Secure</p>
-        </div>
-    """, unsafe_allow_html=True)
-with col4:
-    st.markdown("""
-        <div class="dash-card">
-            <h3>🌐</h3>
-            <p>Available Worldwide</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# Main header
-st.markdown("""
-    <div class="header-container">
-        <div class="spiral-container">
-            <svg width="75" height="75" viewBox="0 0 200 200">
-                <defs>
-                    <linearGradient id="spiralGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#bf00ff"/>
-                        <stop offset="100%" style="stop-color:#7b2fff"/>
-                    </linearGradient>
-                </defs>
-                <path d="M100,100 
-                         C100,60 140,40 160,70 
-                         C180,100 160,140 130,150 
-                         C90,165 50,140 40,100 
-                         C25,50 60,15 100,15 
-                         C150,15 185,55 185,100 
-                         C185,155 140,190 90,185"
-                      fill="none"
-                      stroke="url(#spiralGrad)"
-                      stroke-width="18"
-                      stroke-linecap="round"/>
-            </svg>
-        </div>
-        <p class="logo-title">🌀 VectorWare AI</p>
-        <p class="tagline">✦ Building the Future, One Line at a Time ✦</p>
-    </div>
-    <hr class="glow-divider">
-""", unsafe_allow_html=True)
-
-# Status bar + mic on right
-st.markdown("""
-    <div style="display: flex; align-items: center; 
-    justify-content: space-between; padding: 0 5px; margin-bottom: 15px;">
-        <div class="status-bar" style="flex:1; margin-right:10px;">
-            <span>🟢 AI Online</span>
-            <span>⚡ Fast Mode</span>
-            <span>🔒 Secure</span>
-            <span>🌐 Worldwide</span>
-        </div>
-        <div style="text-align:center;">
-            <button class="mic-btn" id="micBtn" 
-            onclick="startVoice()" title="Voice Search">🎤</button>
-            <p class="mic-label">Voice</p>
-        </div>
-    </div>
     
-    <script>
-    function startVoice() {
-        const SpeechRecognition = window.SpeechRecognition || 
-                                   window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert('Please open this app in Chrome for voice search!');
-            return;
-        }
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'en-US';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-        const btn = document.getElementById('micBtn');
-        
-        recognition.onstart = function() {
-            btn.innerHTML = '🔴';
-            btn.style.boxShadow = '0 0 25px red';
-        };
-        recognition.onresult = function(event) {
-            const text = event.results[0][0].transcript;
-            const input = document.querySelector('input[type="text"]') || 
-                          document.querySelector('input');
-            if (input) {
-                const nativeInputSetter = Object.getOwnPropertyDescriptor(
-                    window.HTMLInputElement.prototype, 'value').set;
-                nativeInputSetter.call(input, text);
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-            }
-            btn.innerHTML = '🎤';
-            btn.style.boxShadow = '0 0 12px rgba(191, 0, 255, 0.6)';
-        };
-        recognition.onerror = function(e) {
-            alert('Mic error: ' + e.error + '. Allow microphone in Chrome settings!');
-            btn.innerHTML = '🎤';
-            btn.style.boxShadow = '0 0 12px rgba(191, 0, 255, 0.6)';
-        };
-        recognition.onend = function() {
-            btn.innerHTML = '🎤';
-            btn.style.boxShadow = '0 0 12px rgba(191, 0, 255, 0.6)';
-        };
-        recognition.start();
-    }
-    </script>
-""", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color:#333; font-size:0.7em;'>● Online &nbsp; v1.0.0</p>", 
+                unsafe_allow_html=True)
 
+# Main area
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Show greeting if no messages
+if len(st.session_state.messages) == 0:
+    st.markdown("""
+        <div style='padding: 50px 0 30px 0;'>
+            <div class='spiral-idle' style='display:block; margin-bottom:20px;'>
+                <svg width="60" height="60" viewBox="0 0 200 200">
+                    <defs>
+                        <linearGradient id="spiralMain" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#bf00ff"/>
+                            <stop offset="100%" style="stop-color:#7b2fff"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M100,100 C100,60 140,40 160,70 C180,100 160,140 130,150 
+                             C90,165 50,140 40,100 C25,50 60,15 100,15 
+                             C150,15 185,55 185,100 C185,155 140,190 90,185"
+                          fill="none" stroke="url(#spiralMain)" stroke-width="18" 
+                          stroke-linecap="round"/>
+                </svg>
+            </div>
+            <p class='greeting'>Hello, I'm</p>
+            <p class='greeting-sub'>VectorWare AI</p>
+            <p style='color:#555; font-size:0.95em; margin-top:8px;'>
+            How can I help you today?</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Suggestion buttons
+    suggestions = [
+        ("🎨", "Help me design a website for my business"),
+        ("📈", "Explain forex trading strategies"),
+        ("🤖", "What can AI automation do for my company"),
+        ("✍️", "Write anything for me"),
+    ]
+    
+    col1, col2 = st.columns(2)
+    for i, (icon, text) in enumerate(suggestions):
+        with col1 if i % 2 == 0 else col2:
+            if st.button(f"{icon}  {text}", key=f"sug_{i}", use_container_width=True):
+                st.session_state.messages.append({"role": "user", "content": text})
+                st.rerun()
+
+# Chat messages
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
-if prompt := st.chat_input("🌀 Ask VectorWare AI anything..."):
+# Bottom input bar with mic
+col_input, col_mic = st.columns([10, 1])
+
+with col_mic:
+    st.markdown("""
+        <button class='mic-icon-btn' id='micBtn' onclick='startVoice()' 
+        style='margin-top:5px;'>
+            <svg class='mic-svg' viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm0 2a2 2 0 0 0-2 2v6a2 2 0 0 0 4 0V5a2 2 0 0 0-2-2zm-1 15.93V21h2v-2.07A8 8 0 0 0 20 11h-2a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93z"/>
+            </svg>
+        </button>
+        
+        <script>
+        function startVoice() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) { alert('Use Chrome for voice!'); return; }
+            const r = new SR();
+            r.lang = 'en-US';
+            r.interimResults = false;
+            const btn = document.getElementById('micBtn');
+            
+            r.onstart = () => {
+                btn.style.background = 'rgba(191, 0, 255, 0.2)';
+                btn.style.borderColor = '#bf00ff';
+            };
+            r.onresult = (e) => {
+                const text = e.results[0][0].transcript;
+                const input = document.querySelector('input');
+                if (input) {
+                    Object.getOwnPropertyDescriptor(
+                        window.HTMLInputElement.prototype,'value'
+                    ).set.call(input, text);
+                    input.dispatchEvent(new Event('input',{bubbles:true}));
+                }
+                btn.style.background = 'transparent';
+                btn.style.borderColor = 'rgba(123,47,255,0.3)';
+            };
+            r.onerror = (e) => {
+                alert('Error: ' + e.error);
+                btn.style.background = 'transparent';
+            };
+            r.onend = () => {
+                btn.style.background = 'transparent';
+                btn.style.borderColor = 'rgba(123,47,255,0.3)';
+            };
+            r.start();
+        }
+        </script>
+    """, unsafe_allow_html=True)
+
+prompt = st.chat_input("Ask VectorWare AI anything...")
+
+if prompt:
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
-
-    with st.spinner(""):
-        response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=st.session_state.messages
-        )
-
-    reply = response.choices[0].message.content
-    st.session_state.messages.append({"role": "assistant", "content": reply})
-    st.chat_message("assistant").write(reply)
+    
+    # Glowing spiral while thinking
+    thinking = st.empty()
+    thinking.markdown("""
+        <div style='display:flex; align-items:center; gap:12px; padding:10px 0;'>
+            <div class='spiral-thinking'>
+                <svg width="35" height="35" viewBox="0 0 200 200">
+                    <defs>
+                        <linearGradient id="st" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#bf00ff"/>
+                            <stop offset="100%" style="stop-color:#00d4ff"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M100,100 C100,60 140,40 160,70 C180,100 160,140 130,150 
+                             C90,165 50,140 40,100 C25,50 60,15 100,15 
+                             C150,15 185,55 185,100 C185,155 140,190 90,185"
+                          fill="none" stroke="url(#st)" stroke-width="18" 
+                          stroke-linecap="round"/>
+                </svg>
+            </div>
+            <p style='color:#9b59ff; margin:0; font-size:0.9em;'>
+            VectorWare is thinking...</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Stream response line by line
+    stream = client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=st.session_state.messages,
+        stream=True
+    )
+    
+    thinking.empty()
+    
+    with st.chat_message("assistant"):
+        response_placeholder = st.empty()
+        full_response = ""
+        for chunk in stream:
+            if chunk.choices[0].delta.content:
+                full_response += chunk.choices[0].delta.content
+                response_placeholder.markdown(full_response + "▌")
+        response_placeholder.markdown(full_response)
+    
+    st.session_state.messages.append({
+        "role": "assistant", 
+        "content": full_response
+    })
     
     if len(st.session_state.messages) == 2:
-        title = prompt[:30] + "..." if len(prompt) > 30 else prompt
+        title = prompt[:28] + "..." if len(prompt) > 28 else prompt
         st.session_state.chat_histories.insert(0, {
             "title": title,
             "messages": st.session_state.messages.copy(),
             "time": datetime.now().strftime("%H:%M")
         })
-    
-    st.rerun()
