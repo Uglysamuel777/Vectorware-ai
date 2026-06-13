@@ -18,7 +18,7 @@ st.markdown("""
     }
     
     section[data-testid="stSidebar"] {
-        background: rgba(20, 0, 40, 0.95) !important;
+        background: rgba(20, 0, 40, 0.98) !important;
         border-right: 1px solid #7b2fff !important;
     }
     
@@ -114,13 +114,11 @@ st.markdown("""
         color: white;
         border: none;
         border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        font-size: 22px;
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
         cursor: pointer;
-        box-shadow: 0 0 15px rgba(191, 0, 255, 0.6);
-        display: block;
-        margin: 10px auto;
+        box-shadow: 0 0 12px rgba(191, 0, 255, 0.6);
         transition: all 0.3s ease;
     }
     
@@ -130,10 +128,63 @@ st.markdown("""
     }
     
     .mic-label {
-        text-align: center;
         color: #bb88ff;
-        font-size: 0.75em;
+        font-size: 0.7em;
         margin-top: 3px;
+        text-align: center;
+    }
+
+    .about-card {
+        background: rgba(123, 47, 255, 0.1);
+        border: 1px solid rgba(123, 47, 255, 0.4);
+        border-radius: 12px;
+        padding: 15px;
+        margin-top: 10px;
+    }
+    
+    .about-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.9em;
+        background: linear-gradient(90deg, #bf00ff, #00d4ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+    }
+    
+    .about-text {
+        color: #bb88ff !important;
+        font-size: 0.78em;
+        line-height: 1.6;
+    }
+    
+    .founder-badge {
+        background: rgba(123, 47, 255, 0.2);
+        border: 1px solid #7b2fff;
+        border-radius: 8px;
+        padding: 5px 10px;
+        margin: 4px 0;
+        font-size: 0.75em;
+        color: white !important;
+    }
+
+    .dash-card {
+        background: rgba(123, 47, 255, 0.1);
+        border: 1px solid rgba(123, 47, 255, 0.3);
+        border-radius: 12px;
+        padding: 12px 15px;
+        text-align: center;
+    }
+    
+    .dash-card h3 {
+        font-size: 1.5em;
+        color: #bf00ff !important;
+        margin: 0;
+    }
+    
+    .dash-card p {
+        font-size: 0.75em;
+        color: #bb88ff !important;
+        margin: 3px 0 0 0;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -141,18 +192,20 @@ st.markdown("""
 # Sidebar
 with st.sidebar:
     st.markdown("""
-        <div style='text-align:center; padding: 10px 0;'>
+        <div style='text-align:center; padding: 10px 0 5px 0;'>
             <p style='font-family: Orbitron; font-size: 1.1em; 
             background: linear-gradient(90deg, #bf00ff, #00d4ff);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;'>
+            -webkit-text-fill-color: transparent;
+            margin:0;'>
             🌀 VectorWare AI</p>
+            <p style='color:#bb88ff; font-size:0.7em; margin:2px 0 10px 0;'>
+            Building the Future</p>
         </div>
     """, unsafe_allow_html=True)
     
     if st.button("➕ New Chat", use_container_width=True):
         st.session_state.messages = []
-        st.session_state.chat_histories = st.session_state.get("chat_histories", [])
         st.rerun()
     
     st.markdown("---")
@@ -161,22 +214,81 @@ with st.sidebar:
     if "chat_histories" not in st.session_state:
         st.session_state.chat_histories = []
     
+    if len(st.session_state.chat_histories) == 0:
+        st.markdown("<small style='color:#666'>No chats yet</small>", unsafe_allow_html=True)
+    
     for i, chat in enumerate(st.session_state.chat_histories):
         if st.button(f"🕐 {chat['title']}", key=f"hist_{i}", use_container_width=True):
             st.session_state.messages = chat["messages"]
             st.rerun()
     
     st.markdown("---")
-    st.markdown("**⚡ Model**")
-    st.markdown("<small style='color:#bb88ff'>llama-3.1-8b-instant</small>", unsafe_allow_html=True)
-    st.markdown("**🔋 Status**")
-    st.markdown("<small style='color:#00ff88'>● Online</small>", unsafe_allow_html=True)
+    
+    # System Info
+    st.markdown("**⚙️ System**")
+    st.markdown("<small style='color:#bb88ff'>Model: llama-3.1-8b</small>", unsafe_allow_html=True)
+    st.markdown("<small style='color:#00ff88'>● Status: Online</small>", unsafe_allow_html=True)
+    st.markdown("<small style='color:#bb88ff'>Version: 1.0.0</small>", unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # About Section
+    st.markdown("""
+        <div class="about-card">
+            <p class="about-title">🏢 About VectorWare</p>
+            <p class="about-text">
+                VectorWare is a next-generation AI and technology company delivering 
+                cutting-edge web design, game development, and AI automation solutions 
+                to clients worldwide.
+            </p>
+            <br/>
+            <p style='color:#7b2fff; font-size:0.75em; margin-bottom:5px;'>👥 Founders</p>
+            <div class="founder-badge">🚀 Samuel Frimpong</div>
+            <div class="founder-badge">💡 Cardinal Kofi Nsiah</div>
+            <br/>
+            <p style='color:#666; font-size:0.7em; text-align:center;'>
+            © 2025 VectorWare. All rights reserved.</p>
+        </div>
+    """, unsafe_allow_html=True)
 
-# Main content
+# Dashboard stats
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    st.markdown("""
+        <div class="dash-card">
+            <h3>🌀</h3>
+            <p>VectorWare AI</p>
+        </div>
+    """, unsafe_allow_html=True)
+with col2:
+    st.markdown("""
+        <div class="dash-card">
+            <h3>⚡</h3>
+            <p>Fast Mode Active</p>
+        </div>
+    """, unsafe_allow_html=True)
+with col3:
+    st.markdown("""
+        <div class="dash-card">
+            <h3>🔒</h3>
+            <p>Encrypted & Secure</p>
+        </div>
+    """, unsafe_allow_html=True)
+with col4:
+    st.markdown("""
+        <div class="dash-card">
+            <h3>🌐</h3>
+            <p>Available Worldwide</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Main header
 st.markdown("""
     <div class="header-container">
         <div class="spiral-container">
-            <svg width="80" height="80" viewBox="0 0 200 200">
+            <svg width="75" height="75" viewBox="0 0 200 200">
                 <defs>
                     <linearGradient id="spiralGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" style="stop-color:#bf00ff"/>
@@ -200,16 +312,24 @@ st.markdown("""
         <p class="tagline">✦ Building the Future, One Line at a Time ✦</p>
     </div>
     <hr class="glow-divider">
-    
-    <div class="status-bar">
-        <span>🟢 AI Online</span>
-        <span>⚡ Fast Mode</span>
-        <span>🔒 Secure</span>
-        <span>🌍 Ghana 🇬🇭</span>
+""", unsafe_allow_html=True)
+
+# Status bar + mic on right
+st.markdown("""
+    <div style="display: flex; align-items: center; 
+    justify-content: space-between; padding: 0 5px; margin-bottom: 15px;">
+        <div class="status-bar" style="flex:1; margin-right:10px;">
+            <span>🟢 AI Online</span>
+            <span>⚡ Fast Mode</span>
+            <span>🔒 Secure</span>
+            <span>🌐 Worldwide</span>
+        </div>
+        <div style="text-align:center;">
+            <button class="mic-btn" id="micBtn" 
+            onclick="startVoice()" title="Voice Search">🎤</button>
+            <p class="mic-label">Voice</p>
+        </div>
     </div>
-    
-    <button class="mic-btn" id="micBtn" onclick="startVoice()" title="Voice Search">🎤</button>
-    <p class="mic-label">Tap to speak (Chrome only)</p>
     
     <script>
     function startVoice() {
@@ -223,14 +343,12 @@ st.markdown("""
         recognition.lang = 'en-US';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
-        
         const btn = document.getElementById('micBtn');
         
         recognition.onstart = function() {
             btn.innerHTML = '🔴';
             btn.style.boxShadow = '0 0 25px red';
         };
-        
         recognition.onresult = function(event) {
             const text = event.results[0][0].transcript;
             const input = document.querySelector('input[type="text"]') || 
@@ -242,20 +360,17 @@ st.markdown("""
                 input.dispatchEvent(new Event('input', { bubbles: true }));
             }
             btn.innerHTML = '🎤';
-            btn.style.boxShadow = '0 0 15px rgba(191, 0, 255, 0.6)';
+            btn.style.boxShadow = '0 0 12px rgba(191, 0, 255, 0.6)';
         };
-        
         recognition.onerror = function(e) {
-            alert('Mic error: ' + e.error + '. Allow microphone access in Chrome settings!');
+            alert('Mic error: ' + e.error + '. Allow microphone in Chrome settings!');
             btn.innerHTML = '🎤';
-            btn.style.boxShadow = '0 0 15px rgba(191, 0, 255, 0.6)';
+            btn.style.boxShadow = '0 0 12px rgba(191, 0, 255, 0.6)';
         };
-        
         recognition.onend = function() {
             btn.innerHTML = '🎤';
-            btn.style.boxShadow = '0 0 15px rgba(191, 0, 255, 0.6)';
+            btn.style.boxShadow = '0 0 12px rgba(191, 0, 255, 0.6)';
         };
-        
         recognition.start();
     }
     </script>
