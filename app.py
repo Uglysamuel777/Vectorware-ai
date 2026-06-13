@@ -24,11 +24,13 @@ st.markdown("""
     }
     
     .stChatMessage {
-        background: rgba(255, 255, 255, 0.08) !important;
-        border: 1px solid #7b2fff !important;
+        background: rgba(123, 47, 255, 0.15) !important;
+        border: 1px solid #bf00ff !important;
         border-radius: 15px !important;
         padding: 10px !important;
-        box-shadow: 0 0 20px rgba(123, 47, 255, 0.5) !important;
+        box-shadow: 0 0 25px rgba(191, 0, 255, 0.6), 
+                    0 0 50px rgba(123, 47, 255, 0.3),
+                    inset 0 0 20px rgba(123, 47, 255, 0.1) !important;
     }
     
     .stChatMessage p, .stChatMessage li, .stChatMessage span {
