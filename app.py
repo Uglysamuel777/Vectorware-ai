@@ -84,7 +84,6 @@ st.markdown("""
         display: flex;
         justify-content: center;
         margin-bottom: 15px;
-        filter: drop-shadow(0 0 20px #7b2fff);
         animation: pulse 2s infinite;
     }
     
@@ -92,6 +91,25 @@ st.markdown("""
         0% { filter: drop-shadow(0 0 10px #7b2fff); }
         50% { filter: drop-shadow(0 0 30px #bf00ff); }
         100% { filter: drop-shadow(0 0 10px #7b2fff); }
+    }
+    
+    .mic-btn {
+        background: linear-gradient(135deg, #7b2fff, #bf00ff);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+        cursor: pointer;
+        box-shadow: 0 0 15px #bf00ff;
+        display: block;
+        margin: 10px auto;
+    }
+    
+    .mic-btn:hover {
+        box-shadow: 0 0 30px #bf00ff;
+        transform: scale(1.1);
     }
     </style>
 """, unsafe_allow_html=True)
@@ -123,6 +141,31 @@ st.markdown("""
         <p class="tagline">✦ Building the Future, One Line at a Time ✦</p>
     </div>
     <hr class="glow-divider">
+    
+    <button class="mic-btn" onclick="startVoice()" title="Voice Search">🎤</button>
+    
+    <script>
+    function startVoice() {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert('Voice search not supported. Please use Chrome.');
+            return;
+        }
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.onresult = function(event) {
+            const text = event.results[0][0].transcript;
+            const input = document.querySelector('input[aria-label="🌀 Ask VectorWare AI anything..."]');
+            if (input) {
+                input.value = text;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        };
+        recognition.onerror = function() {
+            alert('Could not hear you. Try again!');
+        };
+        recognition.start();
+    }
+    </script>
 """, unsafe_allow_html=True)
 
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
