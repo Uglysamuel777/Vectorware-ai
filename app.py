@@ -11,23 +11,23 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- MODERN PRODUCTION CSS ---
+# --- PROFESSIONAL MODERN PURPLE ACCENT THEME ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
     
-    /* Global App Overrides */
+    /* Core App Reset & Soft Purple Background */
     * { font-family: 'Inter', sans-serif !important; }
     
     .stApp {
-        background: #06060c;
+        background: radial-gradient(circle at top center, #11092c 0%, #06040f 100%);
         color: #f3f4f6 !important;
     }
     
-    /* Sidebar styling */
+    /* Sidebar styling with soft purple border */
     section[data-testid="stSidebar"] {
-        background: #0c0c16 !important;
-        border-right: 1px solid rgba(123, 47, 255, 0.15) !important;
+        background: #090615 !important;
+        border-right: 1px solid rgba(147, 85, 255, 0.2) !important;
     }
     
     section[data-testid="stSidebar"] * {
@@ -41,38 +41,32 @@ st.markdown("""
     }
     
     .stChatInput input {
-        background-color: #121224 !important;
+        background-color: #160f33 !important;
         color: #ffffff !important;
-        border: 1px solid rgba(123, 47, 255, 0.25) !important;
+        border: 1px solid rgba(147, 85, 255, 0.3) !important;
         border-radius: 24px !important;
         padding: 12px 20px !important;
     }
     
     .stChatInput input:focus {
-        border-color: rgba(123, 47, 255, 0.6) !important;
-        box-shadow: 0 0 15px rgba(123, 47, 255, 0.2) !important;
+        border-color: rgba(147, 85, 255, 0.7) !important;
+        box-shadow: 0 0 15px rgba(147, 85, 255, 0.3) !important;
     }
     
-    /* Chat Messages Clean Separation */
-    .stChatMessage {
-        background: transparent !important;
-        border: none !important;
-        padding: 15px 0 !important;
-    }
-    
-    [data-testid="stChatMessageContent"] p {
+    /* FIX: Targets only markdown text in chat messages to prevent raw avatar text bugs */
+    [data-testid="stChatMessageContent"] .stMarkdown p {
         color: #e2e8f0 !important;
         line-height: 1.75 !important;
     }
     
     [data-testid="stChatMessageContent"] strong {
-        color: #c084fc !important;
+        color: #d8b4fe !important;
     }
     
-    /* Distinct Spiral Glow & Spin Animations */
+    /* Spiral Glow & Spin Animations */
     @keyframes spiralGlow {
-        0%, 100% { filter: drop-shadow(0 0 6px #7b2fff) drop-shadow(0 0 12px #7b2fff); }
-        50% { filter: drop-shadow(0 0 18px #00d4ff) drop-shadow(0 0 30px #7b2fff); }
+        0%, 100% { filter: drop-shadow(0 0 6px #9b59ff) drop-shadow(0 0 12px #9b59ff); }
+        50% { filter: drop-shadow(0 0 16px #00d4ff) drop-shadow(0 0 25px #9b59ff); }
     }
     
     @keyframes spiralSpin {
@@ -90,7 +84,7 @@ st.markdown("""
         display: inline-block;
     }
     
-    /* Typography Overrides */
+    /* Typography Styling */
     .greeting {
         font-size: 2.4rem;
         font-weight: 300;
@@ -109,20 +103,20 @@ st.markdown("""
     
     /* Layout Cards & Components */
     .about-section {
-        background: rgba(123, 47, 255, 0.05);
-        border: 1px solid rgba(123, 47, 255, 0.15);
+        background: rgba(147, 85, 255, 0.06);
+        border: 1px solid rgba(147, 85, 255, 0.2);
         border-radius: 14px;
         padding: 14px;
         margin-top: 15px;
     }
     
     .founder-tag {
-        background: rgba(123, 47, 255, 0.12);
+        background: rgba(147, 85, 255, 0.15);
         border-radius: 8px;
         padding: 6px 10px;
         margin: 5px 0;
         font-size: 0.8rem;
-        color: #bb88ff !important;
+        color: #d8b4fe !important;
         display: block;
     }
 
@@ -135,8 +129,8 @@ st.markdown("""
     }
     
     .mic-icon-btn {
-        background: #121224;
-        border: 1px solid rgba(123, 47, 255, 0.3);
+        background: #160f33;
+        border: 1px solid rgba(147, 85, 255, 0.35);
         border-radius: 50%;
         width: 44px;
         height: 44px;
@@ -148,34 +142,34 @@ st.markdown("""
     }
     
     .mic-icon-btn:hover {
-        background: rgba(123, 47, 255, 0.15);
-        border-color: rgba(123, 47, 255, 0.6);
-        box-shadow: 0 0 10px rgba(123, 47, 255, 0.2);
+        background: rgba(147, 85, 255, 0.2);
+        border-color: rgba(147, 85, 255, 0.7);
+        box-shadow: 0 0 10px rgba(147, 85, 255, 0.3);
     }
     
     .mic-svg {
         width: 18px;
         height: 18px;
-        fill: #b48cff;
+        fill: #c084fc;
     }
     
-    /* Streamlit Global Button Corrections */
+    /* Streamlit Button System Styles */
     .stButton button {
-        background: rgba(123, 47, 255, 0.08) !important;
+        background: rgba(147, 85, 255, 0.1) !important;
         color: white !important;
-        border: 1px solid rgba(123, 47, 255, 0.2) !important;
+        border: 1px solid rgba(147, 85, 255, 0.25) !important;
         border-radius: 12px !important;
         transition: all 0.2s !important;
     }
     
     .stButton button:hover {
-        background: rgba(123, 47, 255, 0.22) !important;
-        border-color: rgba(123, 47, 255, 0.5) !important;
+        background: rgba(147, 85, 255, 0.25) !important;
+        border-color: rgba(147, 85, 255, 0.6) !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- STATE HYDRATION ---
+# --- STATE MANAGEMENT ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "chat_histories" not in st.session_state:
@@ -209,10 +203,10 @@ with st.sidebar:
         st.rerun()
     
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("<p style='color:#4b5563; font-size:0.75rem; font-weight:600; margin:0;'>RECENT CHATS</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#6b7280; font-size:0.75rem; font-weight:600; margin:0;'>RECENT CHATS</p>", unsafe_allow_html=True)
     
     if not st.session_state.chat_histories:
-        st.markdown("<p style='color:#374151; font-size:0.8rem; margin-top:5px;'>No conversations yet</p>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#4b5563; font-size:0.8rem; margin-top:5px;'>No conversations yet</p>", unsafe_allow_html=True)
     else:
         for i, chat in enumerate(st.session_state.chat_histories[:6]):
             if st.button(f"↩ {chat['title']}", key=f"history_item_{i}", use_container_width=True):
@@ -225,18 +219,18 @@ with st.sidebar:
             <p style='color:#9ca3af; font-size:0.75rem; line-height:1.5; margin:0 0 10px 0;'>
             Next-generation AI architecture delivering high-throughput autonomous enterprise capabilities globally.
             </p>
-            <p style='color:#4b5563; font-size:0.7rem; font-weight:600; margin:0 0 4px 0;'>FOUNDERS</p>
+            <p style='color:#6b7280; font-size:0.7rem; font-weight:600; margin:0 0 4px 0;'>FOUNDERS</p>
             <span class='founder-tag'>🚀 Samuel Frimpong</span>
             <span class='founder-tag'>💡 Cardinal Kofi Nsiah</span>
-            <p style='color:#374151; font-size:0.65rem; text-align:center; margin:12px 0 0 0;'>© 2026 VectorWare Inc.</p>
+            <p style='color:#4b5563; font-size:0.65rem; text-align:center; margin:12px 0 0 0;'>© 2026 VectorWare Inc.</p>
         </div>
     """, unsafe_allow_html=True)
 
 
-# --- MAIN ENGINE AND RUNTIME ---
+# --- API INITIALIZATION ---
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-# Clean Slate Welcome Display
+# Welcome Dashboard Screen
 if not st.session_state.messages:
     st.markdown("""
         <div style='padding: 40px 0 20px 0;'>
@@ -257,11 +251,11 @@ if not st.session_state.messages:
             </div>
             <p class='greeting'>Hello, I'm</p>
             <p class='greeting-sub'>VectorWare AI</p>
-            <p style='color:#6b7280; font-size:0.95rem; margin-top:0;'>How can I help you today?</p>
+            <p style='color:#9ca3af; font-size:0.95rem; margin-top:0;'>How can I help you today?</p>
         </div>
     """, unsafe_allow_html=True)
     
-    # Grid Quick Starter Prompts
+    # Suggestion Cards Grid Layout
     suggestions = [
         ("🎨", "Help me design a website for my business"),
         ("📈", "Explain forex trading strategies"),
@@ -276,12 +270,12 @@ if not st.session_state.messages:
                 st.session_state.messages.append({"role": "user", "content": text})
                 st.rerun()
 
-# Display Persistent Active Conversation Stream
+# Render Chat History
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
 
-# --- USER CONTROL PANEL (INPUT BAR + MIC) ---
+# --- CONTROL BAR INTERFACE (INPUT BAR + MIC) ---
 col_input, col_mic = st.columns([0.88, 0.12])
 
 with col_mic:
@@ -297,15 +291,15 @@ with col_mic:
         <script>
         function startVoiceCapture() {
             const SpeechEngine = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechEngine) { alert('Voice capture is supported primary on Chrome browsers.'); return; }
+            if (!SpeechEngine) { alert('Voice capture is supported primarily on Chrome browsers.'); return; }
             const rec = new SpeechEngine();
             rec.lang = 'en-US';
             rec.interimResults = false;
             const btn = document.getElementById('micBtn');
             
             rec.onstart = () => {
-                btn.style.background = 'rgba(191, 0, 255, 0.25)';
-                btn.style.borderColor = '#bf00ff';
+                btn.style.background = 'rgba(155, 89, 255, 0.25)';
+                btn.style.borderColor = '#9b59ff';
             };
             rec.onresult = (e) => {
                 const capturedText = e.results[0][0].transcript;
@@ -316,8 +310,8 @@ with col_mic:
                 }
             };
             rec.onend = () => {
-                btn.style.background = '#121224';
-                btn.style.borderColor = 'rgba(123,47,255,0.3)';
+                btn.style.background = '#160f33';
+                btn.style.borderColor = 'rgba(147, 85, 255, 0.35)';
             };
             rec.start();
         }
@@ -328,12 +322,12 @@ with col_input:
     prompt = st.chat_input("Ask VectorWare AI anything...")
 
 
-# --- DYNAMIC STREAM RESPONSE ACTIONS ---
+# --- STREAM PROCESSING WITH FLUID CADENCE Throttling ---
 if prompt:
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
     
-    # Spinning Thinking State Transition Markup
+    # Glowing thinking loader
     thinking = st.empty()
     thinking.markdown("""
         <div style='display:flex; align-items:center; gap:12px; padding:12px 0;'>
@@ -356,7 +350,6 @@ if prompt:
         </div>
     """, unsafe_allow_html=True)
     
-    # Call upstream pipeline
     stream = client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
@@ -365,7 +358,7 @@ if prompt:
     
     thinking.empty()
     
-    # Print Response with Claude Style Fluid Character Pacing Throttler
+    # Process word chunks sequentially down to character typing iterations for premium rolling cadence
     with st.chat_message("assistant"):
         response_placeholder = st.empty()
         full_response = ""
@@ -373,17 +366,16 @@ if prompt:
         for chunk in stream:
             content_chunk = chunk.choices[0].delta.content
             if content_chunk:
-                # Loop through characters inside the incoming chunk block to apply pacing
                 for char in content_chunk:
                     full_response += char
                     response_placeholder.markdown(full_response + "▌")
-                    time.sleep(0.005) # Fine tuned millimeter delay for ultra smooth reading
+                    time.sleep(0.005) # Premium typewriter throttle delay
                     
         response_placeholder.markdown(full_response)
     
     st.session_state.messages.append({"role": "assistant", "content": full_response})
     
-    # Append session history context
+    # Save session records
     if len(st.session_state.messages) == 2:
         title = prompt[:26] + "..." if len(prompt) > 26 else prompt
         st.session_state.chat_histories.insert(0, {
