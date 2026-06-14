@@ -14,7 +14,7 @@ st.set_page_config(
 # --- PROFESSIONAL MODERN PURPLE ACCENT THEME ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
     
     /* Target layout elements without breaking structural properties */
     .stApp, .stApp p, .stApp h1, .stApp h2, .stApp h3, .stApp button, .stApp textarea, .stApp input { 
@@ -28,7 +28,7 @@ st.markdown("""
         color: transparent !important;
     }
 
-    /* Optional: Injects clean emojis over the blank space so you still have icons without the text bug */
+    /* Injects clean emojis over the blank space so you still have icons without the text bug */
     [data-testid="stChatMessageAvatarUser"] div::before {
         content: "👤";
         font-size: 1.2rem !important;
@@ -38,8 +38,9 @@ st.markdown("""
         font-size: 1.2rem !important;
     }
     
+    /* Richer purple background gradient */
     .stApp {
-        background: radial-gradient(circle at top center, #11092c 0%, #06040f 100%);
+        background: radial-gradient(circle at top center, #150a3a 0%, #05030d 100%);
         color: #f3f4f6 !important;
     }
     
@@ -232,6 +233,7 @@ with st.sidebar:
                 st.session_state.messages = chat["messages"]
                 st.rerun()
     
+    # Updated Founders Section
     st.markdown("""
         <div class='about-section'>
             <p style='color:#9b59ff; font-size:0.82rem; font-weight:600; margin:0 0 6px 0;'>🏢 Corporate Engine</p>
@@ -241,6 +243,8 @@ with st.sidebar:
             <p style='color:#6b7280; font-size:0.7rem; font-weight:600; margin:0 0 4px 0;'>FOUNDERS</p>
             <span class='founder-tag'>🚀 Samuel Frimpong</span>
             <span class='founder-tag'>💡 Cardinal Kofi Nsiah</span>
+            <span class='founder-tag'>⚡ Gabriel Ahwireng</span>
+            <span class='founder-tag'>⚙️ Gideon Ahwireng</span>
             <p style='color:#4b5563; font-size:0.65rem; text-align:center; margin:12px 0 0 0;'>© 2026 VectorWare Inc.</p>
         </div>
     """, unsafe_allow_html=True)
