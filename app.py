@@ -14,16 +14,28 @@ st.set_page_config(
 # --- PROFESSIONAL MODERN PURPLE ACCENT THEME ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600&display=swap');
     
-    /* Target core layout elements instead of forcing * to prevent breaking icons */
+    /* Target layout elements without breaking structural properties */
     .stApp, .stApp p, .stApp h1, .stApp h2, .stApp h3, .stApp button, .stApp textarea, .stApp input { 
         font-family: 'Inter', sans-serif !important; 
     }
     
-    /* FIX: Force Streamlit's material icons to look like icons, not raw text */
-    [data-testid="stChatMessage"] span {
-        font-family: 'Material Symbols Outlined', 'Material Icons', sans-serif !important;
+    /* CRITICAL BUG FIX: Wipes out the raw "face" and "smart_toy" text completely */
+    [data-testid="stChatMessage"] [data-testid="stChatMessageAvatarUser"] div,
+    [data-testid="stChatMessage"] [data-testid="stChatMessageAvatarAssistant"] div {
+        font-size: 0px !important;
+        color: transparent !important;
+    }
+
+    /* Optional: Injects clean emojis over the blank space so you still have icons without the text bug */
+    [data-testid="stChatMessageAvatarUser"] div::before {
+        content: "👤";
+        font-size: 1.2rem !important;
+    }
+    [data-testid="stChatMessageAvatarAssistant"] div::before {
+        content: "🌀";
+        font-size: 1.2rem !important;
     }
     
     .stApp {
