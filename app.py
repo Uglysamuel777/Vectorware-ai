@@ -16,8 +16,15 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
     
-    /* Core App Reset & Soft Purple Background */
-    * { font-family: 'Inter', sans-serif !important; }
+    /* Target core layout elements instead of forcing * to prevent breaking icons */
+    .stApp, .stApp p, .stApp h1, .stApp h2, .stApp h3, .stApp button, .stApp textarea, .stApp input { 
+        font-family: 'Inter', sans-serif !important; 
+    }
+    
+    /* FIX: Force Streamlit's material icons to look like icons, not raw text */
+    [data-testid="stChatMessage"] span {
+        font-family: 'Material Symbols Outlined', 'Material Icons', sans-serif !important;
+    }
     
     .stApp {
         background: radial-gradient(circle at top center, #11092c 0%, #06040f 100%);
@@ -53,8 +60,8 @@ st.markdown("""
         box-shadow: 0 0 15px rgba(147, 85, 255, 0.3) !important;
     }
     
-    /* FIX: Targets only markdown text in chat messages to prevent raw avatar text bugs */
-    [data-testid="stChatMessageContent"] .stMarkdown p {
+    /* Targets text elements cleanly inside chat blocks */
+    [data-testid="stChatMessageContent"] p {
         color: #e2e8f0 !important;
         line-height: 1.75 !important;
     }
@@ -322,7 +329,7 @@ with col_input:
     prompt = st.chat_input("Ask VectorWare AI anything...")
 
 
-# --- STREAM PROCESSING WITH FLUID CADENCE Throttling ---
+# --- STREAM PROCESSING WITH FLUID CADENCE ---
 if prompt:
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
