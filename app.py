@@ -1,6 +1,6 @@
 import streamlit as st
 from groq import Groq
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import base64
 
@@ -12,7 +12,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- PROFESSIONAL MODERN PURPLE ACCENT THEME ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
@@ -138,32 +137,7 @@ st.markdown("""
         height: 100%;
         padding-top: 5px;
     }
-    
-    .mic-icon-btn {
-        background: #160f33;
-        border: 1px solid rgba(147, 85, 255, 0.35);
-        border-radius: 50%;
-        width: 44px;
-        height: 44px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-    }
-    
-    .mic-icon-btn:hover {
-        background: rgba(147, 85, 255, 0.2);
-        border-color: rgba(147, 85, 255, 0.7);
-        box-shadow: 0 0 10px rgba(147, 85, 255, 0.3);
-    }
-    
-    .mic-svg {
-        width: 18px;
-        height: 18px;
-        fill: #c084fc;
-    }
-    
+
     .stButton button {
         background: rgba(147, 85, 255, 0.1) !important;
         color: white !important;
@@ -177,7 +151,6 @@ st.markdown("""
         border-color: rgba(147, 85, 255, 0.6) !important;
     }
 
-    /* Image upload zone styling */
     .upload-zone {
         border: 1px dashed rgba(147, 85, 255, 0.4);
         border-radius: 14px;
@@ -194,7 +167,6 @@ st.markdown("""
         display: block;
     }
 
-    /* Hide default Streamlit file uploader chrome */
     [data-testid="stFileUploader"] {
         background: transparent !important;
         border: none !important;
@@ -207,7 +179,6 @@ st.markdown("""
         padding: 0 !important;
     }
 
-    /* Image preview pill */
     .img-preview-pill {
         display: inline-flex;
         align-items: center;
@@ -220,6 +191,38 @@ st.markdown("""
         color: #d8b4fe;
         margin-bottom: 8px;
     }
+
+    /* Name onboarding card */
+    .name-card {
+        background: rgba(147, 85, 255, 0.06);
+        border: 1px solid rgba(147, 85, 255, 0.25);
+        border-radius: 20px;
+        padding: 32px 28px;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    /* History section labels */
+    .history-label {
+        color: #6b7280;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        margin: 12px 0 4px 0;
+        padding-left: 2px;
+    }
+
+    /* Name badge in sidebar */
+    .name-badge {
+        background: rgba(147, 85, 255, 0.12);
+        border: 1px solid rgba(147, 85, 255, 0.25);
+        border-radius: 10px;
+        padding: 7px 12px;
+        margin-bottom: 10px;
+        font-size: 0.8rem;
+        color: #d8b4fe;
+        text-align: center;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -229,12 +232,110 @@ if "messages" not in st.session_state:
 if "chat_histories" not in st.session_state:
     st.session_state.chat_histories = []
 if "pending_image" not in st.session_state:
-    st.session_state.pending_image = None  # stores {base64, mime_type, name}
+    st.session_state.pending_image = None
+if "user_name" not in st.session_state:
+    st.session_state.user_name = None
+if "name_input_temp" not in st.session_state:
+    st.session_state.name_input_temp = ""
 
-# --- SIDEBAR ---
+# --- HELPER: encode image ---
+def encode_image(uploaded_file):
+    bytes_data = uploaded_file.read()
+    b64 = base64.b64encode(bytes_data).decode("utf-8")
+    mime = uploaded_file.type
+    return b64, mime
+
+# --- HELPER: group chat histories by date ---
+def group_histories_by_date(histories):
+    now = datetime.now()
+    today, yesterday, this_week, older = [], [], [], []
+    for chat in histories:
+        chat_date = chat.get("date", now)
+        diff = (now - chat_date).days
+        if diff == 0:
+            today.append(chat)
+        elif diff == 1:
+            yesterday.append(chat)
+        elif diff <= 7:
+            this_week.append(chat)
+        else:
+            older.append(chat)
+    return today, yesterday, this_week, older
+
+# --- HELPER: get greeting based on time ---
+def get_time_greeting():
+    hour = datetime.now().hour
+    if hour < 12:
+        return "Good morning"
+    elif hour < 17:
+        return "Good afternoon"
+    else:
+        return "Good evening"
+
+# --- API INITIALIZATION ---
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+
+# ============================================================
+# NAME ONBOARDING SCREEN
+# ============================================================
+if st.session_state.user_name is None:
+    st.markdown("""
+        <div style='padding: 40px 0 10px 0; text-align: center;'>
+            <div class='spiral-idle' style='display:block; margin-bottom:15px;'>
+                <svg width="60" height="60" viewBox="0 0 200 200">
+                    <defs>
+                        <linearGradient id="spiralMain" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#bf00ff"/>
+                            <stop offset="100%" style="stop-color:#7b2fff"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M100,100 C100,60 140,40 160,70 C180,100 160,140 130,150 
+                             C90,165 50,140 40,100 C25,50 60,15 100,15 
+                             C150,15 185,55 185,100 C185,155 140,190 90,185"
+                          fill="none" stroke="url(#spiralMain)" stroke-width="18" 
+                          stroke-linecap="round"/>
+                </svg>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+        <div class='name-card'>
+            <p style='font-size:1.6rem; font-weight:300; color:#ffffff; margin:0;'>Welcome to</p>
+            <p style='font-size:1.8rem; font-weight:700; background: linear-gradient(90deg, #9b59ff, #bf00ff, #00d4ff);
+                      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin:0 0 8px 0;'>
+                VectorWare AI
+            </p>
+            <p style='color:#9ca3af; font-size:0.95rem; margin:0 0 24px 0;'>
+                Before we begin — what's your name?
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    name_col1, name_col2, name_col3 = st.columns([0.15, 0.7, 0.15])
+    with name_col2:
+        name_input = st.text_input(
+            label="your name",
+            placeholder="Enter your name...",
+            label_visibility="collapsed",
+            key="name_field"
+        )
+        if st.button("Let's Go →", use_container_width=True):
+            if name_input.strip():
+                st.session_state.user_name = name_input.strip()
+                st.rerun()
+            else:
+                st.warning("Please enter your name to continue.")
+
+    st.stop()  # Don't render anything else until name is entered
+
+
+# ============================================================
+# SIDEBAR
+# ============================================================
 with st.sidebar:
     st.markdown("""
-        <div style='text-align:center; padding: 20px 0 15px 0;'>
+        <div style='text-align:center; padding: 20px 0 10px 0;'>
             <div class='spiral-idle'>
                 <svg width="38" height="38" viewBox="0 0 200 200">
                     <defs>
@@ -250,27 +351,50 @@ with st.sidebar:
                           stroke-linecap="round"/>
                 </svg>
             </div>
-            <p style='font-size:1rem; color:#ffffff; margin:8px 0 0 0; font-weight:500; letter-spacing:0.3px;'>VectorWare AI</p>
+            <p style='font-size:1rem; color:#ffffff; margin:8px 0 0 0; font-weight:500;'>VectorWare AI</p>
         </div>
     """, unsafe_allow_html=True)
-    
+
+    # Show user name badge
+    st.markdown(f"""
+        <div class='name-badge'>
+            👤 {st.session_state.user_name}
+        </div>
+    """, unsafe_allow_html=True)
+
     if st.button("✦ New Chat", use_container_width=True):
         st.session_state.messages = []
         st.session_state.pending_image = None
         st.rerun()
-    
+
+    # Change name button
+    if st.button("✎ Change Name", use_container_width=True):
+        st.session_state.user_name = None
+        st.session_state.messages = []
+        st.rerun()
+
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("<p style='color:#6b7280; font-size:0.75rem; font-weight:600; margin:0;'>RECENT CHATS</p>", unsafe_allow_html=True)
-    
+
+    # --- GROUPED CHAT HISTORY ---
+    today, yesterday, this_week, older = group_histories_by_date(st.session_state.chat_histories)
+
+    def render_history_section(label, chats, offset=0):
+        if chats:
+            st.markdown(f"<p class='history-label'>{label}</p>", unsafe_allow_html=True)
+            for i, chat in enumerate(chats[:5]):
+                if st.button(f"↩ {chat['title']}", key=f"hist_{label}_{offset}_{i}", use_container_width=True):
+                    st.session_state.messages = chat["messages"]
+                    st.rerun()
+
     if not st.session_state.chat_histories:
         st.markdown("<p style='color:#4b5563; font-size:0.8rem; margin-top:5px;'>No conversations yet</p>", unsafe_allow_html=True)
     else:
-        for i, chat in enumerate(st.session_state.chat_histories[:6]):
-            if st.button(f"↩ {chat['title']}", key=f"history_item_{i}", use_container_width=True):
-                st.session_state.messages = chat["messages"]
-                st.rerun()
+        render_history_section("TODAY", today, 0)
+        render_history_section("YESTERDAY", yesterday, 10)
+        render_history_section("THIS WEEK", this_week, 20)
+        render_history_section("OLDER", older, 30)
 
-    # Model badge in sidebar
+    # Model badge
     st.markdown("""
         <div style='margin-top: 12px; padding: 8px 12px; background: rgba(0,212,255,0.07); 
              border: 1px solid rgba(0,212,255,0.2); border-radius: 10px;'>
@@ -296,25 +420,17 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
 
-# --- API INITIALIZATION ---
-client = Groq(api_key=st.secrets["GROQ_API_KEY"])
-
-# --- HELPER: encode uploaded image to base64 ---
-def encode_image(uploaded_file):
-    bytes_data = uploaded_file.read()
-    b64 = base64.b64encode(bytes_data).decode("utf-8")
-    mime = uploaded_file.type  # e.g. "image/png"
-    return b64, mime
-
-
-# --- WELCOME DASHBOARD ---
+# ============================================================
+# WELCOME DASHBOARD
+# ============================================================
 if not st.session_state.messages:
-    st.markdown("""
+    greeting = get_time_greeting()
+    st.markdown(f"""
         <div style='padding: 40px 0 20px 0;'>
             <div class='spiral-idle' style='display:block; margin-bottom:15px;'>
                 <svg width="55" height="55" viewBox="0 0 200 200">
                     <defs>
-                        <linearGradient id="spiralMain" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <linearGradient id="spiralMain2" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" style="stop-color:#bf00ff"/>
                             <stop offset="100%" style="stop-color:#7b2fff"/>
                         </linearGradient>
@@ -322,23 +438,23 @@ if not st.session_state.messages:
                     <path d="M100,100 C100,60 140,40 160,70 C180,100 160,140 130,150 
                              C90,165 50,140 40,100 C25,50 60,15 100,15 
                              C150,15 185,55 185,100 C185,155 140,190 90,185"
-                          fill="none" stroke="url(#spiralMain)" stroke-width="18" 
+                          fill="none" stroke="url(#spiralMain2)" stroke-width="18" 
                           stroke-linecap="round"/>
                 </svg>
             </div>
-            <p class='greeting'>Hello, I'm</p>
-            <p class='greeting-sub'>VectorWare AI</p>
+            <p class='greeting'>{greeting},</p>
+            <p class='greeting-sub'>{st.session_state.user_name} 👋</p>
             <p style='color:#9ca3af; font-size:0.95rem; margin-top:0;'>How can I help you today?</p>
         </div>
     """, unsafe_allow_html=True)
-    
+
     suggestions = [
         ("🎨", "Help me design a website for my business"),
         ("📈", "Explain forex trading strategies"),
         ("🤖", "What can AI automation do for my company"),
         ("✍️", "Write an executive pitch proposal for me"),
     ]
-    
+
     col1, col2 = st.columns(2)
     for idx, (icon, text) in enumerate(suggestions):
         with col1 if idx % 2 == 0 else col2:
@@ -346,11 +462,13 @@ if not st.session_state.messages:
                 st.session_state.messages.append({"role": "user", "content": text})
                 st.rerun()
 
-# --- RENDER CHAT HISTORY ---
+
+# ============================================================
+# RENDER CHAT HISTORY
+# ============================================================
 for msg in st.session_state.messages:
     if msg["role"] == "user":
         with st.chat_message("user"):
-            # If message has an image preview saved, show it
             if isinstance(msg.get("content"), list):
                 for block in msg["content"]:
                     if block["type"] == "text":
@@ -366,7 +484,9 @@ for msg in st.session_state.messages:
         st.chat_message("assistant").write(msg["content"])
 
 
-# --- IMAGE UPLOAD ZONE (above input bar) ---
+# ============================================================
+# IMAGE UPLOAD ZONE
+# ============================================================
 st.markdown("<div class='upload-zone'>", unsafe_allow_html=True)
 st.markdown("<span class='upload-label'>🖼️ Attach an image for VectorWare to analyze</span>", unsafe_allow_html=True)
 uploaded_file = st.file_uploader(
@@ -377,14 +497,9 @@ uploaded_file = st.file_uploader(
 )
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Store uploaded image in session state
 if uploaded_file is not None:
     b64, mime = encode_image(uploaded_file)
-    st.session_state.pending_image = {
-        "base64": b64,
-        "mime_type": mime,
-        "name": uploaded_file.name
-    }
+    st.session_state.pending_image = {"base64": b64, "mime_type": mime, "name": uploaded_file.name}
     st.markdown(f"""
         <div class='img-preview-pill'>
             🖼️ {uploaded_file.name} attached — ask anything about it below
@@ -392,86 +507,102 @@ if uploaded_file is not None:
     """, unsafe_allow_html=True)
 
 
-# --- CONTROL BAR ---
+# ============================================================
+# CONTROL BAR — INPUT + MIC
+# ============================================================
 col_input, col_mic = st.columns([0.88, 0.12])
 
 with col_mic:
     st.markdown("""
         <div class="mic-container">
-            <button class='mic-icon-btn' id='micBtn' onclick='startVoiceCapture()'>
-                <svg class='mic-svg' viewBox="0 0 24 24">
-                    <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm0 2a2 2 0 0 0-2 2v6a2 2 0 0 0 4 0V5a2 2 0 0 0-2-2zm-1 15.93V21h2v-2.07A8 8 0 0 0 20 11h-2a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93z"/>
-                </svg>
+            <button id='micBtn' onclick='startVoiceCapture()'
+                style='background:#160f33; border:1px solid rgba(147,85,255,0.35);
+                       border-radius:50%; width:44px; height:44px; cursor:pointer;
+                       font-size:1.2rem; display:flex; align-items:center;
+                       justify-content:center; transition: all 0.2s ease;'>
+                🎤
             </button>
         </div>
+
         <script>
         function startVoiceCapture() {
             const SpeechEngine = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechEngine) { alert('Voice capture is supported primarily on Chrome browsers.'); return; }
+            if (!SpeechEngine) {
+                alert('Please use Chrome for voice input.');
+                return;
+            }
             const rec = new SpeechEngine();
             rec.lang = 'en-US';
             rec.interimResults = false;
+            rec.maxAlternatives = 1;
             const btn = document.getElementById('micBtn');
+
             rec.onstart = () => {
-                btn.style.background = 'rgba(155, 89, 255, 0.25)';
-                btn.style.borderColor = '#9b59ff';
+                btn.innerHTML = '🔴';
+                btn.style.borderColor = '#ff4444';
+                btn.style.boxShadow = '0 0 12px rgba(255,68,68,0.5)';
             };
+
             rec.onresult = (e) => {
-                const capturedText = e.results[0][0].transcript;
-                const nativeInput = parent.document.querySelector('textarea[data-testid="stChatInputTextArea"]');
-                if (nativeInput) {
-                    nativeInput.value = capturedText;
-                    nativeInput.dispatchEvent(new Event('input', { bubbles: true }));
+                const text = e.results[0][0].transcript;
+                const textarea = window.parent.document.querySelector(
+                    'textarea[data-testid="stChatInputTextArea"]'
+                );
+                if (textarea) {
+                    const setter = Object.getOwnPropertyDescriptor(
+                        window.HTMLTextAreaElement.prototype, 'value'
+                    ).set;
+                    setter.call(textarea, text);
+                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                    textarea.focus();
                 }
             };
-            rec.onend = () => {
-                btn.style.background = '#160f33';
-                btn.style.borderColor = 'rgba(147, 85, 255, 0.35)';
+
+            rec.onerror = (e) => {
+                btn.innerHTML = '🎤';
+                btn.style.borderColor = 'rgba(147,85,255,0.35)';
+                btn.style.boxShadow = 'none';
+                if (e.error === 'not-allowed') {
+                    alert('Mic access denied. Allow microphone in browser settings.');
+                }
             };
+
+            rec.onend = () => {
+                btn.innerHTML = '🎤';
+                btn.style.borderColor = 'rgba(147,85,255,0.35)';
+                btn.style.boxShadow = 'none';
+            };
+
             rec.start();
         }
         </script>
     """, unsafe_allow_html=True)
 
 with col_input:
-    prompt = st.chat_input("Ask VectorWare AI anything... or attach an image above ↑")
+    prompt = st.chat_input(f"Ask VectorWare AI anything, {st.session_state.user_name}...")
 
 
-# --- MESSAGE PROCESSING ---
+# ============================================================
+# MESSAGE PROCESSING
+# ============================================================
 if prompt:
-    # Build the user message — multimodal if image is attached
     if st.session_state.pending_image:
         img = st.session_state.pending_image
         user_message_content = [
-            {
-                "type": "text",
-                "text": prompt
-            },
-            {
-                "type": "image_url",
-                "image_url": {
-                    "url": f"data:{img['mime_type']};base64,{img['base64']}"
-                }
-            }
+            {"type": "text", "text": prompt},
+            {"type": "image_url", "image_url": {"url": f"data:{img['mime_type']};base64,{img['base64']}"}}
         ]
-        # Display user message with image preview
         with st.chat_message("user"):
             st.write(prompt)
             st.image(base64.b64decode(img["base64"]), width=260)
-
-        st.session_state.messages.append({
-            "role": "user",
-            "content": user_message_content
-        })
-        st.session_state.pending_image = None  # Clear after sending
-
+        st.session_state.messages.append({"role": "user", "content": user_message_content})
+        st.session_state.pending_image = None
     else:
-        # Plain text message
         user_message_content = prompt
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
 
-    # --- THINKING LOADER ---
+    # Thinking loader
     thinking = st.empty()
     thinking.markdown("""
         <div style='display:flex; align-items:center; gap:12px; padding:12px 0;'>
@@ -494,17 +625,17 @@ if prompt:
         </div>
     """, unsafe_allow_html=True)
 
-    # --- API CALL: Llama 4 Scout with vision support ---
-    # Build messages for API — serialize content correctly
-    api_messages = []
+    # System prompt that knows the user's name
+    system_prompt = f"""You are VectorWare AI, a highly intelligent, professional and friendly AI assistant built by VectorWare Inc.
+The user's name is {st.session_state.user_name}. Address them by name naturally and warmly where appropriate — not every message, just when it feels right.
+Be concise, helpful, and professional. You can analyze images, answer questions, write content, and help with business tasks."""
+
+    api_messages = [{"role": "system", "content": system_prompt}]
     for m in st.session_state.messages:
-        api_messages.append({
-            "role": m["role"],
-            "content": m["content"]  # already correct format (str or list)
-        })
+        api_messages.append({"role": m["role"], "content": m["content"]})
 
     stream = client.chat.completions.create(
-        model="meta-llama/llama-4-scout-17b-16e-instruct",  # ⬆️ UPGRADED
+        model="meta-llama/llama-4-scout-17b-16e-instruct",
         messages=api_messages,
         max_tokens=2048,
         stream=True
@@ -512,11 +643,9 @@ if prompt:
 
     thinking.empty()
 
-    # --- TYPEWRITER RESPONSE ---
     with st.chat_message("assistant"):
         response_placeholder = st.empty()
         full_response = ""
-        
         for chunk in stream:
             content_chunk = chunk.choices[0].delta.content
             if content_chunk:
@@ -524,17 +653,17 @@ if prompt:
                     full_response += char
                     response_placeholder.markdown(full_response + "▌")
                     time.sleep(0.005)
-                    
         response_placeholder.markdown(full_response)
 
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-    # Save to history
+    # Save to history with date
     if len(st.session_state.messages) == 2:
         title = prompt[:26] + "..." if len(prompt) > 26 else prompt
         st.session_state.chat_histories.insert(0, {
             "title": title,
             "messages": list(st.session_state.messages),
-            "time": datetime.now().strftime("%H:%M")
+            "time": datetime.now().strftime("%H:%M"),
+            "date": datetime.now()
         })
         st.rerun()
