@@ -32,18 +32,12 @@ MSG_TEXT = "#e2e8f0" if st.session_state.dark_mode else "#1f2937"
 
 st.markdown(f"""
 <style>
-#MainMenu {visibility: hidden !important;}
-footer {visibility: hidden !important;}
-header {visibility: hidden !important;}
-[data-testid="stToolbar"] {display: none !important;}
-[data-testid="stDecoration"] {display: none !important;}
-[data-testid="stStatusWidget"] {display: none !important;}
-
-.greeting-sub {
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-}
+#MainMenu {{visibility: hidden !important;}}
+footer {{visibility: hidden !important;}}
+header {{visibility: hidden !important;}}
+[data-testid="stToolbar"] {{display: none !important;}}
+[data-testid="stDecoration"] {{display: none !important;}}
+[data-testid="stStatusWidget"] {{display: none !important;}}
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 .stApp {{ font-family: 'Inter', sans-serif !important; background: {BG}; color: {TEXT} !important; }}
 section[data-testid="stSidebar"] {{ background: {SIDEBAR_BG} !important; border-right: 1px solid rgba(147,85,255,0.2) !important; }}
