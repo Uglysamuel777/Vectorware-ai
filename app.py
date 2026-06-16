@@ -270,9 +270,9 @@ if "voice_prompt" not in st.session_state:
 MEMORY_FILE = "vectorware_memory.json"
 def load_memory(name):
  if os.path.exists(MEMORY_FILE):
- with open(MEMORY_FILE, "r") as f:
- data = json.load(f)
- return data.get(name, {}).get("facts", [])
+        with open(MEMORY_FILE, "r") as f:
+            data = json.load(f)
+        return data.get(name, {}).get("facts", [])
  return []
 def save_memory(name, facts):
  data = {}
