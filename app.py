@@ -1,4 +1,3 @@
-cat > /mnt/user-data/outputs/app.py << 'ENDOFFILE'
 import streamlit as st
 from groq import Groq
 from datetime import datetime
@@ -46,7 +45,7 @@ section[data-testid="stSidebar"] * {{ color: {TEXT} !important; }}
 .stButton button {{ background: rgba(147,85,255,0.1) !important; color: {TEXT} !important; border: 1px solid rgba(147,85,255,0.25) !important; border-radius: 12px !important; transition: all 0.2s !important; }}
 .stButton button:hover {{ background: rgba(147,85,255,0.25) !important; }}
 [data-testid="stFileUploader"] {{ background: transparent !important; border: none !important; padding: 0 !important; }}
-[data-testid="stFileUploader"] section {{ background: transparent !important; border: none !important; padding: 0 !important; }}
+[data-testfile="stFileUploader"] section {{ background: transparent !important; border: none !important; padding: 0 !important; }}
 @keyframes spiralGlow {{ 0%,100% {{ filter: drop-shadow(0 0 6px #9b59ff); }} 50% {{ filter: drop-shadow(0 0 16px #00d4ff); }} }}
 @keyframes spiralSpin {{ 0% {{ transform: rotate(0deg); }} 100% {{ transform: rotate(360deg); }} }}
 .spiral-idle {{ animation: spiralGlow 4s ease-in-out infinite; display: inline-block; }}
@@ -164,19 +163,20 @@ SPIRAL_SVG = """<svg width="{size}" height="{size}" viewBox="0 0 200 200">
 fill="none" stroke="url(#sg{id})" stroke-width="18" stroke-linecap="round"/>
 </svg>"""
 
-# NAME ONBOARDING
+# ── NAME ONBOARDING ──────────────────────────────────────────────────────────
+
 if st.session_state.user_name is None:
     st.markdown(f"<div style='text-align:center; padding:40px 0 10px 0;'><div class='spiral-idle'>{SPIRAL_SVG.format(size=60, id='intro')}</div></div>", unsafe_allow_html=True)
     st.markdown(f"""
     <div class='name-card'>
-        <p style='font-size:1.6rem; font-weight:300; color:{TEXT}; margin:0;'>Welcome to</p>
-        <p style='font-size:1.8rem; font-weight:700; background:linear-gradient(90deg,#9b59ff,#bf00ff,#00d4ff);
-                  -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:0 0 8px 0;'>VectorWare AI</p>
-        <p style='color:#9ca3af; font-size:0.95rem; margin:0 0 24px 0;'>Next-generation AI - before we begin, what is your name?</p>
+    <p style='font-size:1.6rem; font-weight:300; color:{TEXT}; margin:0;'>Welcome to</p>
+    <p style='font-size:1.8rem; font-weight:700; background:linear-gradient(90deg,#9b59ff,#bf00ff,#00d4ff);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:0 0 8px 0;'>VectorWare AI</p>
+    <p style='color:#9ca3af; font-size:0.95rem; margin:0 0 24px 0;'>Next-generation AI - before we begin, what is your name?</p>
     </div>""", unsafe_allow_html=True)
     c1, c2, c3 = st.columns([0.15, 0.7, 0.15])
     with c2:
-        name_input = st.text_input("name", placeholder="Enter your name...", label_visibility="collapsed", key="name_field")
+        name_input = st.text_input("name", placeholder="Enter your name…", label_visibility="collapsed", key="name_field")
         if st.button("Let's Go", use_container_width=True):
             if name_input.strip():
                 st.session_state.user_name = name_input.strip()
@@ -186,7 +186,8 @@ if st.session_state.user_name is None:
                 st.warning("Please enter your name to continue.")
     st.stop()
 
-# SIDEBAR
+# ── SIDEBAR ──────────────────────────────────────────────────────────────────
+
 with st.sidebar:
     st.markdown(f"<div style='text-align:center; padding:20px 0 10px 0;'><div class='spiral-idle'>{SPIRAL_SVG.format(size=38, id='sb')}</div><p style='font-size:1rem; color:#ffffff; margin:8px 0 0 0; font-weight:500;'>VectorWare AI</p></div>", unsafe_allow_html=True)
     mode_label = "Switch to Light Mode" if st.session_state.dark_mode else "Switch to Dark Mode"
@@ -225,31 +226,37 @@ with st.sidebar:
         render_section("THIS WEEK", this_week, 20)
         render_section("OLDER", older, 30)
     st.markdown("""<div style='margin-top:12px; padding:8px 12px; background:rgba(0,212,255,0.07); border:1px solid rgba(0,212,255,0.2); border-radius:10px;'>
-        <p style='color:#00d4ff; font-size:0.7rem; font-weight:600; margin:0 0 2px 0;'>ACTIVE MODEL</p>
-        <p style='color:#e5e7eb; font-size:0.75rem; margin:0;'>Llama 4 Scout 17B</p>
-        <p style='color:#6b7280; font-size:0.65rem; margin:2px 0 0 0;'>Vision - Search - Memory</p>
+    <p style='color:#00d4ff; font-size:0.7rem; font-weight:600; margin:0 0 2px 0;'>ACTIVE MODEL</p>
+    <p style='color:#e5e7eb; font-size:0.75rem; margin:0;'>Llama 4 Scout 17B</p>
+    <p style='color:#6b7280; font-size:0.65rem; margin:2px 0 0 0;'>Vision - Search - Memory</p>
     </div>""", unsafe_allow_html=True)
     st.markdown("""<div class='about-section'>
-        <p style='color:#9b59ff; font-size:0.82rem; font-weight:600; margin:0 0 6px 0;'>Corporate Engine</p>
-        <p style='color:#9ca3af; font-size:0.75rem; line-height:1.5; margin:0 0 10px 0;'>Next-generation AI architecture delivering high-throughput autonomous enterprise capabilities globally.</p>
-        <p style='color:#6b7280; font-size:0.7rem; font-weight:600; margin:0 0 4px 0;'>FOUNDERS</p>
-        <span class='founder-tag'>Samuel Frimpong</span>
-        <span class='founder-tag'>Cardinal Kofi Nsiah</span>
-        <span class='founder-tag'>Gabriel Ahwireng</span>
-        <span class='founder-tag'>Gideon Ahwireng</span>
-        <p style='color:#4b5563; font-size:0.65rem; text-align:center; margin:12px 0 0 0;'>2026 VectorWare Inc.</p>
+    <p style='color:#9b59ff; font-size:0.82rem; font-weight:600; margin:0 0 6px 0;'>Corporate Engine</p>
+    <p style='color:#9ca3af; font-size:0.75rem; line-height:1.5; margin:0 0 10px 0;'>Next-generation AI architecture delivering high-throughput autonomous enterprise capabilities globally.</p>
+    <p style='color:#6b7280; font-size:0.7rem; font-weight:600; margin:0 0 4px 0;'>FOUNDERS</p>
+    <span class='founder-tag'>Samuel Frimpong</span>
+    <span class='founder-tag'>Cardinal Kofi Nsiah</span>
+    <span class='founder-tag'>Gabriel Ahwireng</span>
+    <span class='founder-tag'>Gideon Ahwireng</span>
+    <p style='color:#4b5563; font-size:0.65rem; text-align:center; margin:12px 0 0 0;'>2026 VectorWare Inc.</p>
     </div>""", unsafe_allow_html=True)
 
-# WELCOME DASHBOARD
+# ── WELCOME DASHBOARD ────────────────────────────────────────────────────────
+
 if not st.session_state.messages:
     greeting = get_time_greeting()
     st.markdown(f"""<div style='padding:40px 0 20px 0;'>
-        <div class='spiral-idle' style='display:block; margin-bottom:15px;'>{SPIRAL_SVG.format(size=55, id='main')}</div>
-        <p class='greeting'>{greeting},</p>
-        <p class='greeting-sub'>{st.session_state.user_name}</p>
-        <p style='color:#9ca3af; font-size:0.95rem; margin-top:0;'>How can I help you today?</p>
+    <div class='spiral-idle' style='display:block; margin-bottom:15px;'>{SPIRAL_SVG.format(size=55, id='main')}</div>
+    <p class='greeting'>{greeting},</p>
+    <p class='greeting-sub'>{st.session_state.user_name}</p>
+    <p style='color:#9ca3af; font-size:0.95rem; margin-top:0;'>How can I help you today?</p>
     </div>""", unsafe_allow_html=True)
-    suggestions = [("Design a website for my business"), ("Explain forex trading strategies"), ("What can AI automation do for my company"), ("Write an executive pitch proposal")]
+    suggestions = [
+        "Design a website for my business",
+        "Explain forex trading strategies",
+        "What can AI automation do for my company",
+        "Write an executive pitch proposal"
+    ]
     col1, col2 = st.columns(2)
     for idx, text in enumerate(suggestions):
         with col1 if idx % 2 == 0 else col2:
@@ -257,7 +264,8 @@ if not st.session_state.messages:
                 st.session_state.messages.append({"role": "user", "content": text})
                 st.rerun()
 
-# RENDER CHAT
+# ── RENDER CHAT HISTORY ──────────────────────────────────────────────────────
+
 for i, msg in enumerate(st.session_state.messages):
     if msg["role"] == "user":
         with st.chat_message("user"):
@@ -274,7 +282,8 @@ for i, msg in enumerate(st.session_state.messages):
             st.write(msg["content"])
             st.markdown(f"""<button class='copy-btn' onclick='navigator.clipboard.writeText({json.dumps(msg["content"])});this.innerText="Copied!";setTimeout(()=>this.innerText="Copy",1500);'>Copy</button>""", unsafe_allow_html=True)
 
-# IMAGE UPLOAD
+# ── IMAGE UPLOAD ─────────────────────────────────────────────────────────────
+
 st.markdown("<div class='upload-zone'><span style='color:#9b59ff; font-size:0.78rem; font-weight:500;'>Attach an image for VectorWare to analyze</span>", unsafe_allow_html=True)
 uploaded_file = st.file_uploader("upload", type=["png","jpg","jpeg","gif","webp"], label_visibility="collapsed", key="image_uploader")
 st.markdown("</div>", unsafe_allow_html=True)
@@ -283,7 +292,8 @@ if uploaded_file is not None:
     st.session_state.pending_image = {"base64": b64, "mime_type": mime, "name": uploaded_file.name}
     st.markdown(f"<div class='img-preview-pill'>{uploaded_file.name} attached</div>", unsafe_allow_html=True)
 
-# MIC + INPUT
+# ── MIC + INPUT ──────────────────────────────────────────────────────────────
+
 col_input, col_mic = st.columns([0.88, 0.12])
 with col_mic:
     st.markdown("<div style='padding-top:5px;'>", unsafe_allow_html=True)
@@ -294,7 +304,7 @@ with col_mic:
             import io
             audio_bytes = io.BytesIO(audio["bytes"])
             audio_bytes.name = "audio.wav"
-            with st.spinner("Transcribing..."):
+            with st.spinner("Transcribing…"):
                 transcription = client.audio.transcriptions.create(model="whisper-large-v3", file=audio_bytes)
             if transcription.text:
                 st.session_state.voice_prompt = transcription.text
@@ -303,17 +313,21 @@ with col_mic:
         st.markdown("🎤", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 with col_input:
-    prompt = st.chat_input(f"Ask VectorWare anything, {st.session_state.user_name}...")
+    prompt = st.chat_input(f"Ask VectorWare anything, {st.session_state.user_name}…")
 
 if st.session_state.voice_prompt:
     prompt = st.session_state.voice_prompt
     st.session_state.voice_prompt = None
 
-# PROCESS MESSAGE
+# ── PROCESS MESSAGE ──────────────────────────────────────────────────────────
+
 if prompt:
     if st.session_state.pending_image:
         img = st.session_state.pending_image
-        user_content = [{"type": "text", "text": prompt}, {"type": "image_url", "image_url": {"url": f"data:{img['mime_type']};base64,{img['base64']}"}}]
+        user_content = [
+            {"type": "text", "text": prompt},
+            {"type": "image_url", "image_url": {"url": f"data:{img['mime_type']};base64,{img['base64']}"}}
+        ]
         with st.chat_message("user"):
             st.write(prompt)
             st.image(base64.b64decode(img["base64"]), width=260)
@@ -362,13 +376,23 @@ if prompt:
     if st.session_state.memory_facts:
         memory_ctx = f"\n\nWhat you know about {st.session_state.user_name}: {', '.join(st.session_state.memory_facts)}"
 
-    system_prompt = f"You are VectorWare AI, a highly intelligent, professional and friendly AI assistant built by VectorWare Inc. The user's name is {st.session_state.user_name}. Address them by name naturally where it feels right. Be concise, insightful, and professional.{memory_ctx}{search_context}"
+    system_prompt = (
+        f"You are VectorWare AI, a highly intelligent, professional and friendly AI assistant "
+        f"built by VectorWare Inc. The user's name is {st.session_state.user_name}. "
+        f"Address them by name naturally where it feels right. Be concise, insightful, and professional."
+        f"{memory_ctx}{search_context}"
+    )
 
     api_messages = [{"role": "system", "content": system_prompt}]
     for m in st.session_state.messages:
         api_messages.append({"role": m["role"], "content": m["content"]})
 
-    stream = client.chat.completions.create(model="meta-llama/llama-4-scout-17b-16e-instruct", messages=api_messages, max_tokens=2048, stream=True)
+    stream = client.chat.completions.create(
+        model="meta-llama/llama-4-scout-17b-16e-instruct",
+        messages=api_messages,
+        max_tokens=2048,
+        stream=True
+    )
 
     thinking_ph.empty()
     loader.empty()
@@ -390,7 +414,10 @@ if prompt:
 
     if len(st.session_state.messages) == 2:
         title = prompt[:26] + "..." if len(prompt) > 26 else prompt
-        st.session_state.chat_histories.insert(0, {"title": title, "messages": list(st.session_state.messages), "time": datetime.now().strftime("%H:%M"), "date": datetime.now()})
+        st.session_state.chat_histories.insert(0, {
+            "title": title,
+            "messages": list(st.session_state.messages),
+            "time": datetime.now().strftime("%H:%M"),
+            "date": datetime.now()
+        })
         st.rerun()
-ENDOFFILE
-python3 -c "import ast; ast.parse(open('/mnt/user-data/outputs/app.py').read()); print('SYNTAX VERIFIED OK')"
