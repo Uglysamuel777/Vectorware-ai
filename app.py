@@ -10,7 +10,7 @@ import re
 # — PAGE CONFIGURATION —
 
 st.set_page_config(
-page_title=“VectorWare AI”,
+page_title="VectorWare AI",
 page_icon=“🌀”,
 layout=“centered”,
 initial_sidebar_state=“expanded”
